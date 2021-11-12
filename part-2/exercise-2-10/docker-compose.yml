@@ -1,0 +1,46 @@
+version: "3.9"
+
+# The needed change was to modify the CORS policy of the backend.
+# I overwrote the value of backend's environment variable REQUEST_ORIGIN in docker-compose.yml.
+# Alternatively one could modify backend's Dockerfile and set it there.
+# This solution avoids rebuilding backend's image.
+# Changes made:
+# - docker-compose.yml: Added "REQUEST_ORIGIN=http://localhost" to the backend's environment variables.
+# - Dockerfile(s): None.
+
+services:
+  database:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_PASSWORD=postgres"
+    volumes:
+      - "./database:/var/lib/postgresql/data"
+  example-backend:
+    image: example-backend
+    build: ./example-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - "POSTGRES_HOST=database"
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=postgres"
+      - "POSTGRES_DATABASE=postgres"
+      - "REDIS_HOST=redis"
+      - "REQUEST_ORIGIN=http://localhost"   # Overwrite the Dockerfile's REQUEST_ORIGIN.
+  example-frontend:
+    image: example-frontend
+    build: ./example-frontend
+    ports:
+      - "5000:5000"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  nginx-proxy:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
