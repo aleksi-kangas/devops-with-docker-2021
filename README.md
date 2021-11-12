@@ -2,6 +2,7 @@
 
 > My submissions to the MOOC [DevOps with Docker 2021](https://devopswithdocker.com/) by University of Helsinki.
 
+![Certificate](certificate.png)
 
 ## Part 1 - Docker
 - [x] [Exercise 1.01](part-1/exercise-1-01)
